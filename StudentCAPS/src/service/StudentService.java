@@ -12,6 +12,7 @@ import dao.StudentDAOImpl;
 import exception.NotFoundException;
 import model.CourseDTO;
 import model.CourseSearchDTO;
+import model.StudentGradesDTO;
 
 public class StudentService {
 	
@@ -35,7 +36,24 @@ public class StudentService {
 			return List;
 		}
     }
-
+    
+    
+    @SuppressWarnings("finally")
+    public ArrayList<StudentGradesDTO> listcoursewithGPA(String studentID) {
+    	ArrayList<StudentGradesDTO> SgradeList = new ArrayList<StudentGradesDTO>();
+		try {
+			SgradeList = studentDao.listcoursewithGPA(studentID);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally
+		{
+			return SgradeList;
+		}
+    }
+    
+    
+    //waiting to be implemented
     @SuppressWarnings("finally")
 	public ArrayList<CourseDTO> findCourseByCriteria(CourseSearchDTO cso){
 		ArrayList<CourseDTO> currentList = new ArrayList<CourseDTO>();

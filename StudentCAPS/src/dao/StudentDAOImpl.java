@@ -17,14 +17,19 @@ import model.CourseDTO;
 import model.CourseSearchDTO;
 import model.EnrolmentDTO;
 import model.StudentDTO;
+import model.StudentGradesDTO;
 
 public class StudentDAOImpl implements StudentDAO {
 	private static final String dbUrl = "jdbc:mysql://localhost:3306/StudentCAPS";
 	private static final String dbUserName = "root";
 	private static final String dbPassword = "password";
 	
-	//not completed
-	public ArrayList<CourseDTO> findcoursewithGPA(String studentID) throws DAOException, SQLException {
+	
+
+	//finds all courses that the student has not enrolled in
+	@Override
+	public ArrayList<CourseDTO> findAllcourse(String studentID) throws DAOException, SQLException {
+		// TODO Auto-generated method stub
 		ArrayList<CourseDTO> items = new ArrayList<CourseDTO>();
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -32,8 +37,12 @@ public class StudentDAOImpl implements StudentDAO {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		String selectSql = "SELECT course.courseID, course.courseName,course.endDate,course.courseCredits, enrolment.studentGrade FROM course, enrolment  WHERE course_courseID = course.courseID and enrolment.user_userid =" +studentID+" and enrolment.studentGrade is not null;";
-				Connection conn = null;
+		String selectSql = "SELECT "
+				+ "course.courseID, course.courseName, course.courseSize,course.courseFees, "
+				+ "course.courseCredits, course.comments, course.startDate, course.endDate"
+				+ " FROM course, enrolment "
+				+ "WHERE course_courseID = course.courseID and enrolment.user_userid ="+studentID+ "and enrolment.studentGrade is not null;";
+		Connection conn = null;
 	
 			conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
 			Statement st = conn.createStatement();
@@ -42,7 +51,7 @@ public class StudentDAOImpl implements StudentDAO {
 			ResultSet rs = st.executeQuery(selectSql);
 			while (rs.next()) {
 				CourseDTO cour = new CourseDTO();
-				cour.setCourseName(rs.getString("courseID"));
+				cour.setCourseID(rs.getString("courseID"));
 				cour.setCourseName(rs.getString("courseName"));
 				cour.setCourseSize(rs.getInt("courseSize"));
 				cour.setStartDate(rs.getDate("startDate"));
@@ -56,6 +65,43 @@ public class StudentDAOImpl implements StudentDAO {
 			return items;
 	}
 	
+	
+	//list all courses with grades for the student
+	public ArrayList<StudentGradesDTO> listcoursewithGPA(String studentID) throws DAOException, SQLException {
+		ArrayList<StudentGradesDTO> Sgradelist = new ArrayList<StudentGradesDTO>();
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		String selectSql = "SELECT course.courseID, course.courseName,course.startDate, "
+				+ "course.endDate, course.courseCredits, enrolment.studentGrade "
+				+ "from course, enrolment "
+				+ "WHERE course_courseID = course.courseID "
+				+ "and enrolment.user_userid =" + studentID +" and enrolment.studentGrade is not null;";
+			Connection conn = null;
+	
+			conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
+			Statement st = conn.createStatement();
+			Logger.getLogger(getClass().getName()).log(Level.INFO,
+					"Executing select: " + selectSql);
+			ResultSet rs = st.executeQuery(selectSql);
+			while (rs.next()) {
+				StudentGradesDTO Sgrades = new StudentGradesDTO();
+				Sgrades.setCourseID(rs.getString("courseID"));
+				Sgrades.setCourseName(rs.getString("courseName"));
+				Sgrades.setStartDate(rs.getDate("startDate"));
+				Sgrades.setEndDate(rs.getDate("endDate"));
+				Sgrades.setCourseCredits(rs.getInt("courseCredits"));
+				Sgrades.setCourseGrade(rs.getString("studentGrade"));
+				Sgradelist.add(Sgrades);
+			}
+			st.close();
+			return Sgradelist;
+	}
+	
+	//Have not implemented this method on JSP yet
 	public ArrayList<CourseDTO> findCourseByCriteria(CourseSearchDTO sear)
 			throws DAOException {
 		ArrayList<CourseDTO> list = new ArrayList<CourseDTO>();
@@ -115,6 +161,7 @@ public class StudentDAOImpl implements StudentDAO {
 		return list;
 	}
 	
+	//waiting for thazin to complete 
 	public void enrolcourse(EnrolmentDTO enrol) throws DAOException {
 //		Date date = new Date(0);
 //		
@@ -151,44 +198,9 @@ public class StudentDAOImpl implements StudentDAO {
 //		
 	}
 
-	//completed
-	@Override
-	public ArrayList<CourseDTO> findAllcourse(String studentID) throws DAOException, SQLException {
-		// TODO Auto-generated method stub
-		ArrayList<CourseDTO> items = new ArrayList<CourseDTO>();
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		String selectSql = "SELECT "
-				+ "course.courseID, course.courseName, course.courseSize,course.courseFees, "
-				+ "course.courseCredits, course.comments, course.startDate, course.endDate"
-				+ " FROM course, enrolment "
-				+ "WHERE course_courseID = course.courseID and enrolment.user_userid ="+studentID+ "and enrolment.studentGrade is not null;";
-		Connection conn = null;
 	
-			conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
-			Statement st = conn.createStatement();
-			Logger.getLogger(getClass().getName()).log(Level.INFO,
-					"Executing select: " + selectSql);
-			ResultSet rs = st.executeQuery(selectSql);
-			while (rs.next()) {
-				CourseDTO cour = new CourseDTO();
-				cour.setCourseName(rs.getString("courseID"));
-				cour.setCourseName(rs.getString("courseName"));
-				cour.setCourseSize(rs.getInt("courseSize"));
-				cour.setStartDate(rs.getDate("startDate"));
-				cour.setEndDate(rs.getDate("endDate"));
-				cour.setCourseFees(rs.getDouble("courseFees"));
-				cour.setCourseCredits(rs.getString("courseCredits"));
-				cour.setComments(rs.getString("comments"));
-				items.add(cour);
-			}
-			st.close();
-			return items;
-	}
+	
+	
 }
 	
 	

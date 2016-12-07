@@ -9,14 +9,26 @@ public class EnrolmentDTO {
 	private Date courseStart;
 	private Date enrolmentBy;
 	private String studentGrade;
+	public int noOfStudents;
 	
-	public EnrolmentDTO(String studentID, String courseID, Date courseStart, Date enrolmentBy, String studentGrade) {
+	public EnrolmentDTO(String studentID, String courseID, Date courseStart, Date enrolmentBy, String studentGrade, int noOfStudents) {
 		super();
 		this.studentID = studentID;
 		this.courseID = courseID;
 		this.courseStart = courseStart;
 		this.enrolmentBy = enrolmentBy;
 		this.studentGrade = studentGrade;
+		this.noOfStudents= noOfStudents;
+	}
+	
+	
+
+	public int getNoOfStudents() {
+		return noOfStudents;
+	}
+
+	public void setNoOfStudents(int noOfStudents) {
+		this.noOfStudents = noOfStudents;
 	}
 	
 	public String getStudentID() {
@@ -49,11 +61,16 @@ public class EnrolmentDTO {
 	public void setStudentGrade(String studentGrade) {
 		this.studentGrade = studentGrade;
 	}
+
+
+
 	@Override
 	public String toString() {
 		return "EnrolmentDTO [studentID=" + studentID + ", courseID=" + courseID + ", courseStart=" + courseStart
-				+ ", enrolmentBy=" + enrolmentBy + ", studentGrade=" + studentGrade + "]";
+				+ ", enrolmentBy=" + enrolmentBy + ", studentGrade=" + studentGrade + ", noOfStudents=" + noOfStudents
+				+ "]";
 	}
+	
 
 	
 
